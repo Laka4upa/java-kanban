@@ -8,13 +8,6 @@ public class Task {
     private int id;
     private TaskStatus status;
 
-    public Task(String name, String description, TaskStatus status) {
-        this.name = name;
-        this.description = description;
-        this.status = status;
-        this.id = TaskManager.generateId();
-    }
-
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
@@ -22,11 +15,10 @@ public class Task {
         this.id = TaskManager.generateId();
     }
 
-    public Task(int id, String name, String description) {
+    public Task(String name, String description, int id) {
         this.id = id;
         this.name = name;
         this.description = description;
-
     }
 
     public Task(String name, String description, int id, TaskStatus status) {

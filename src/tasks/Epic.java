@@ -12,7 +12,7 @@ public class Epic extends Task {
     }
 
     public Epic(String name, String description,int id, ArrayList<Integer> subIds) {
-        super(id, name, description);
+        super(name, description, id);
         this.subIds = subIds;
     }
 

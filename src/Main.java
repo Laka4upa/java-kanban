@@ -37,8 +37,9 @@ public class Main {
         System.out.println(taskManager.getAllSubtasksOfEpic(epic1));
         System.out.println(taskManager.getAllSubtasksOfEpic(epic2));
 
-        taskManager.updateTask(new Task(task1.getName(),task1.getDescription(), task1.getId(), TaskStatus.IN_PROGRESS));
-        taskManager.updateTask(new Task(task2.getName(),task2.getDescription(), task2.getId(),TaskStatus.DONE));
+        Task taskToUpdate = taskManager.getTaskById(task1.getId());
+        taskToUpdate.setStatus(TaskStatus.IN_PROGRESS);
+        taskManager.updateTask(taskToUpdate);
         taskManager.updateSubtask(new Subtask("Сабтаск 1","Найти подходящий корабль", subtask1.getId(),
                 TaskStatus.IN_PROGRESS, subtask1.getEpicId()));
         taskManager.updateSubtask(new Subtask(subtask4.getName(),"Составить список покупок",subtask4.getId(),
