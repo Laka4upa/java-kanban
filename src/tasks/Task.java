@@ -12,7 +12,6 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = TaskStatus.NEW;
-        this.id = TaskManager.generateId();
     }
 
     public Task(String name, String description, int id) {

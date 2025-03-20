@@ -32,7 +32,7 @@ public class Main {
 
         System.out.println("добавили задач");
         System.out.println(taskManager.getAllTasks());
-        System.out.println(taskManager.getAllEpic());
+        System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubtasks());
         System.out.println(taskManager.getAllSubtasksOfEpic(epic1));
         System.out.println(taskManager.getAllSubtasksOfEpic(epic2));
@@ -42,15 +42,16 @@ public class Main {
         taskManager.updateTask(taskToUpdate);
         taskManager.updateSubtask(new Subtask("Сабтаск 1","Найти подходящий корабль", subtask1.getId(),
                 TaskStatus.IN_PROGRESS, subtask1.getEpicId()));
-        taskManager.updateSubtask(new Subtask(subtask4.getName(),"Составить список покупок",subtask4.getId(),
+        taskManager.updateSubtask(new Subtask(subtask4.getName(),"Составить список покупок", subtask4.getId(),
                 TaskStatus.DONE, subtask4.getEpicId()));
-        taskManager.updateSubtask(new Subtask(subtask5.getName(),subtask5.getDescription(),subtask5.getId(),
+        taskManager.updateSubtask(new Subtask(subtask5.getName(), subtask5.getDescription(), subtask5.getId(),
                 TaskStatus.DONE, subtask5.getEpicId()));
-        taskManager.updateEpic(new Epic("ЭПИК 1" , "не работать))",epic1.getId(),epic1.getSubIds()));
+        //При передаче "левых id" старые на месте
+        taskManager.updateEpic(new Epic("ЭПИК 1мод" , "не работать))", epic1.getId(), epic2.getSubIds()));
 
         System.out.println("обновили задачи");
         System.out.println(taskManager.getAllTasks());
-        System.out.println(taskManager.getAllEpic());
+        System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubtasks());
         System.out.println(taskManager.getAllSubtasksOfEpic(epic1));
         System.out.println(taskManager.getAllSubtasksOfEpic(epic2));
@@ -61,14 +62,14 @@ public class Main {
         System.out.println("удалили выборочно задачи");
 
         System.out.println(taskManager.getAllTasks());
-        System.out.println(taskManager.getAllEpic());
+        System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubtasks());
         System.out.println("удалили все задачи");
         taskManager.removeAllTasks();
         taskManager.removeAllEpic();
         taskManager.removeAllSubtasks();
         System.out.println(taskManager.getAllTasks());
-        System.out.println(taskManager.getAllEpic());
+        System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubtasks());
 
     }
