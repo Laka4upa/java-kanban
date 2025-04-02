@@ -1,11 +1,11 @@
-import managers.TaskManager;
+import managers.*;
 import tasks.*;
 
 public class Main {
 
     public static void main(String[] args) {
         System.out.println("Поехали!");
-        TaskManager taskManager = new TaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         Task task1 = new Task("Задача 1", "Проснуться");
         Task task2 = new Task("Задача 2", "Встрепенуться");
@@ -47,7 +47,10 @@ public class Main {
         taskManager.updateSubtask(new Subtask(subtask5.getName(), subtask5.getDescription(), subtask5.getId(),
                 TaskStatus.DONE, subtask5.getEpicId()));
         //При передаче "левых id" старые на месте
-        taskManager.updateEpic(new Epic("ЭПИК 1мод" , "не работать))", epic1.getId(), epic2.getSubIds()));
+        taskManager.updateEpic(new Epic("ЭПИК 1мод" , "не работать))", epic2.getSubIds()));
+
+        System.out.println("проверяем историю");
+        System.out.println(taskManager.getHistory());
 
         System.out.println("обновили задачи");
         System.out.println(taskManager.getAllTasks());

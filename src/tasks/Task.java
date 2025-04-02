@@ -1,5 +1,4 @@
 package tasks;
-import managers.TaskManager;
 import java.util.Objects;
 
 public class Task {
@@ -14,8 +13,8 @@ public class Task {
         this.status = TaskStatus.NEW;
     }
 
-    public Task(String name, String description, int id) {
-        this.id = id;
+    public Task(String name, String description, TaskStatus status) {
+        this.status = status;
         this.name = name;
         this.description = description;
     }
@@ -61,16 +60,15 @@ public class Task {
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(id);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof Task)) return false;
         Task task = (Task) o;
-        return id == task.id && Objects.equals(name, task.name) &&
-                Objects.equals(description, task.description) && Objects.equals(status, task.status);
+        return id == task.id;
     }
 
     @Override
@@ -83,10 +81,3 @@ public class Task {
                 '}';
     }
 }
-
-
-
-
-
-
-

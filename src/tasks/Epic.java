@@ -1,37 +1,43 @@
 package tasks;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 
 public class Epic extends Task {
-    private final ArrayList<Integer> subIds;
+    private final List<Integer> subIds;
 
     public Epic(String name, String description) {
         super(name, description);
         this.subIds = new ArrayList<>();
     }
 
-    public Epic(String name, String description,int id, ArrayList<Integer> subIds) {
-        super(name, description, id);
+    public Epic(String name, String description, List<Integer> subIds) {
+        super(name, description);
         this.subIds = subIds;
     }
 
-    public ArrayList<Integer> getSubIds() {
-        return subIds;
+    public List<Integer> getSubIds() {
+        return new ArrayList<>(subIds);
+    }
+
+    public void addSubtaskId(int subtaskId) {
+        if (!subIds.contains(subtaskId)) {
+            subIds.add(subtaskId);
+        }
+    }
+
+    public void removeSubtaskId(int subtaskId) {
+        subIds.remove(Integer.valueOf(subtaskId));
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Epic epic = (Epic) o;
-        return Objects.equals(subIds, epic.subIds);
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), subIds);
+        return super.hashCode();
     }
 
     @Override
