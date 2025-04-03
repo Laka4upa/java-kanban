@@ -2,10 +2,10 @@ package tasks;
 import java.util.Objects;
 
 public class Task {
-    private String name;
-    private String description;
-    private int id;
-    private TaskStatus status;
+    protected String name;
+    protected String description;
+    protected int id;
+    protected TaskStatus status;
 
     public Task(String name, String description) {
         this.name = name;
@@ -56,6 +56,10 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public Task copy() {
+        return new Task(this.name, this.description, this.id, this.status);
     }
 
     @Override

@@ -9,13 +9,18 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
-    public Subtask(String nameTask, String description, int id, TaskStatus status, int epicId) {
-        super(nameTask, description, id, status);
+    public Subtask(String name, String description, int id, TaskStatus status, int epicId) {
+        super(name, description, id, status);
         this.epicId = epicId;
     }
 
     public int getEpicId() {
         return epicId;
+    }
+
+    @Override
+    public Subtask copy() {
+        return new Subtask(this.name, this.description, this.id, this.status, this.epicId);
     }
 
     @Override
