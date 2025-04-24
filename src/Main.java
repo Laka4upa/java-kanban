@@ -38,14 +38,14 @@ public class Main {
         System.out.println(taskManager.getAllSubtasksOfEpic(epic2));
 
         Task taskToUpdate = taskManager.getTaskById(task1.getId());
-        taskToUpdate.setStatus(TaskStatus.IN_PROGRESS);
+        taskToUpdate.setStatus(Status.IN_PROGRESS);
         taskManager.updateTask(taskToUpdate);
         taskManager.updateSubtask(new Subtask("Сабтаск 1","Найти подходящий корабль", subtask1.getId(),
-                TaskStatus.IN_PROGRESS, subtask1.getEpicId()));
+                Status.IN_PROGRESS, subtask1.getEpicId()));
         taskManager.updateSubtask(new Subtask(subtask4.getName(),"Составить список покупок", subtask4.getId(),
-                TaskStatus.DONE, subtask4.getEpicId()));
+                Status.DONE, subtask4.getEpicId()));
         taskManager.updateSubtask(new Subtask(subtask5.getName(), subtask5.getDescription(), subtask5.getId(),
-                TaskStatus.DONE, subtask5.getEpicId()));
+                Status.DONE, subtask5.getEpicId()));
         //При передаче "левых id" старые на месте
         taskManager.updateEpic(new Epic("ЭПИК 1мод" , "не работать))", epic2.getSubIds()));
 

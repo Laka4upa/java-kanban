@@ -5,21 +5,21 @@ public class Task {
     protected String name;
     protected String description;
     protected int id;
-    protected TaskStatus status;
+    protected Status status;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.status = TaskStatus.NEW;
+        this.status = Status.NEW;
     }
 
-    public Task(String name, String description, TaskStatus status) {
+    public Task(String name, String description, Status status) {
         this.status = status;
         this.name = name;
         this.description = description;
     }
 
-    public Task(String name, String description, int id, TaskStatus status) {
+    public Task(String name, String description, int id, Status status) {
         this.name = name;
         this.description = description;
         this.id = id;
@@ -50,11 +50,11 @@ public class Task {
         this.id = id;
     }
 
-    public TaskStatus getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(TaskStatus status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
