@@ -47,7 +47,7 @@ public class Main {
         taskManager.updateSubtask(new Subtask(subtask5.getName(), subtask5.getDescription(),
                 subtask5.getId(), Status.DONE, subtask5.getEpicId()));
         //При передаче "левых id" старые на месте
-        taskManager.updateEpic(new Epic("ЭПИК 1мод" , "не работать))", epic2.getSubIds()));
+        taskManager.updateEpic(new Epic("ЭПИК 1мод", "не работать))", epic2.getSubIds()));
 
         System.out.println("проверяем историю");
         System.out.println(taskManager.getHistory());
