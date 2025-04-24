@@ -1,11 +1,13 @@
 package managers;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import tasks.*;
 
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+
 
 class InMemoryHistoryManagerTest {
 

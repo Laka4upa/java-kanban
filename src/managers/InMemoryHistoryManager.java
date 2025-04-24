@@ -1,7 +1,7 @@
 package managers;
 
-import tasks.*;
 import java.util.*;
+import tasks.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private final CustomLinkedList history = new CustomLinkedList();

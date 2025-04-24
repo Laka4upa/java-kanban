@@ -17,8 +17,8 @@ public class Main {
         Epic epic1 = new Epic("ЭПИК 1", "Работать не покладая крюк");
         taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask("Сабтаск 1", "Захватить корабль", epic1.getId());
-        Subtask subtask2 = new Subtask("Сабтаск 2", "Поднять паруса",epic1.getId());
-        Subtask subtask3 = new Subtask("Сабтаск 3", "Ярррргггххх!!!",epic1.getId());
+        Subtask subtask2 = new Subtask("Сабтаск 2", "Поднять паруса", epic1.getId());
+        Subtask subtask3 = new Subtask("Сабтаск 3", "Ярррргггххх!!!", epic1.getId());
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
         taskManager.addSubtask(subtask3);
@@ -40,12 +40,12 @@ public class Main {
         Task taskToUpdate = taskManager.getTaskById(task1.getId());
         taskToUpdate.setStatus(Status.IN_PROGRESS);
         taskManager.updateTask(taskToUpdate);
-        taskManager.updateSubtask(new Subtask("Сабтаск 1","Найти подходящий корабль", subtask1.getId(),
-                Status.IN_PROGRESS, subtask1.getEpicId()));
-        taskManager.updateSubtask(new Subtask(subtask4.getName(),"Составить список покупок", subtask4.getId(),
-                Status.DONE, subtask4.getEpicId()));
-        taskManager.updateSubtask(new Subtask(subtask5.getName(), subtask5.getDescription(), subtask5.getId(),
-                Status.DONE, subtask5.getEpicId()));
+        taskManager.updateSubtask(new Subtask("Сабтаск 1", "Найти подходящий корабль",
+                subtask1.getId(), Status.IN_PROGRESS, subtask1.getEpicId()));
+        taskManager.updateSubtask(new Subtask(subtask4.getName(), "Составить список покупок",
+                subtask4.getId(), Status.DONE, subtask4.getEpicId()));
+        taskManager.updateSubtask(new Subtask(subtask5.getName(), subtask5.getDescription(),
+                subtask5.getId(), Status.DONE, subtask5.getEpicId()));
         //При передаче "левых id" старые на месте
         taskManager.updateEpic(new Epic("ЭПИК 1мод" , "не работать))", epic2.getSubIds()));
 
