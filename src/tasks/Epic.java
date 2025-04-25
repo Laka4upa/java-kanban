@@ -26,7 +26,7 @@ public class Epic extends Task {
         return true;
     }
 
-    public boolean removeSubtaskId(int subtaskId) {
+    public boolean removeSubtaskById(int subtaskId) {
        return subIds.remove(Integer.valueOf(subtaskId));
     }
 

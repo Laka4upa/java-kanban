@@ -69,7 +69,7 @@ public class Main {
         System.out.println(taskManager.getAllSubtasks());
         System.out.println("удалили все задачи");
         taskManager.removeAllTasks();
-        taskManager.removeAllEpic();
+        taskManager.removeAllEpics();
         taskManager.removeAllSubtasks();
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllEpics());

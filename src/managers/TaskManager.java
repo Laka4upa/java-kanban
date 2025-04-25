@@ -20,7 +20,7 @@ public interface TaskManager {
 
     void removeAllSubtasks();
 
-    void removeAllEpic();
+    void removeAllEpics();
 
     //c получение по идентификатору
     Task getTaskById(int id);

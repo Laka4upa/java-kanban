@@ -41,11 +41,17 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void removeAllTasks() {
+        for (Integer taskId : tasksHashMap.keySet()) {
+            historyManager.remove(taskId);
+        }
         tasksHashMap.clear();
     }
 
     @Override
     public void removeAllSubtasks() {
+        for (Integer subtaskId : subsHashMap.keySet()) {
+            historyManager.remove(subtaskId);
+        }
         subsHashMap.clear();
         for (Epic epic : epicsHashMap.values()) {
             epic.clearSubtaskIds();
@@ -54,7 +60,13 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void removeAllEpic() {
+    public void removeAllEpics() {
+        for (Integer subtaskId : subsHashMap.keySet()) {
+            historyManager.remove(subtaskId);
+        }
+        for (Integer epicId : epicsHashMap.keySet()) {
+            historyManager.remove(epicId);
+        }
         epicsHashMap.clear();
         subsHashMap.clear();
     }
@@ -103,7 +115,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setId(generateId());
         Epic epicCopy = new Epic(epic.getName(), epic.getDescription());
         epicCopy.setId(epic.getId());
-        epicCopy.setStatus(epic.getStatus());
+        epicCopy.setStatus(Status.NEW);
         epicCopy.getSubIds().addAll(epic.getSubIds());
         epicsHashMap.put(epicCopy.getId(), epicCopy);
     }
@@ -149,8 +161,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtask == null || !subsHashMap.containsKey(subtask.getId())) {
             return;
         }
-        // Создаем копию для обновления
-        Subtask subtaskCopy = subtask.copy();
+        Subtask subtaskCopy = subtask.copy(); // Создаем копию для обновления
         subsHashMap.put(subtaskCopy.getId(), subtaskCopy);
         updateEpicStatus(epicsHashMap.get(subtaskCopy.getEpicId()));
     }
@@ -177,10 +188,15 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void removeSubtaskById(int id) {
         Subtask subtask = subsHashMap.remove(id);
-        Epic epic = getEpicById(subtask.getEpicId());
-        epic.removeSubtaskId(id);
-        updateEpicStatus(epic);
-        historyManager.remove(id);
+        if (subtask != null) {
+            int epicId = subtask.getEpicId();
+            Epic epic = epicsHashMap.get(epicId);
+            if (epic != null) {
+                epic.removeSubtaskById(id);
+                updateEpicStatus(epic);
+            }
+            historyManager.remove(id);
+        }
     }
 
     @Override
