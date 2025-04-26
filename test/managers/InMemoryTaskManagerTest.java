@@ -1,10 +1,9 @@
 package managers;
 
-import tasks.*;
-
-
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
+import tasks.*;
 
 class InMemoryTaskManagerTest {
 
@@ -45,17 +44,27 @@ class InMemoryTaskManagerTest {
     @Test
     void taskShouldRemainUnchangedAfterAddingToManager() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();
-        Task originalTask = new Task("Original Name", "Original Description", 1, TaskStatus.NEW);
+        Task originalTask = new Task("Original Name", "Original Description", 1, Status.NEW);
         taskManager.addTask(originalTask);
         //Меняем оригинальную задачу
         originalTask.setName("New Name");
         originalTask.setDescription("New Description");
-        originalTask.setStatus(TaskStatus.DONE);
+        originalTask.setStatus(Status.DONE);
         //Проверяем, что задача в менеджере не изменилась
         Task storedTask = taskManager.getTaskById(1);
 
         assertEquals("Original Name", storedTask.getName());
         assertEquals("Original Description", storedTask.getDescription());
-        assertEquals(TaskStatus.NEW, storedTask.getStatus());
+        assertEquals(Status.NEW, storedTask.getStatus());
+    }
+
+    @Test
+    void testUniqueIdGeneration() {
+        InMemoryTaskManager tm = new InMemoryTaskManager();
+        Task task1 = new Task("Task1", "Desc1", Status.NEW);
+        Task task2 = new Task("Task2", "Desc2", Status.NEW);
+        tm.addTask(task1); // id = 1, счетчик начинается с 1
+        tm.addTask(task2); // id = 2
+        assertEquals(task1.getId() + 1, task2.getId()); // id второй задачи должен быть на 1 больше первого
     }
 }

@@ -5,11 +5,11 @@ public class Subtask extends Task {
 
     public Subtask(String name, String description, int epicId) {
         super(name, description);
-        super.setStatus(TaskStatus.NEW);
+        super.setStatus(Status.NEW);
         this.epicId = epicId;
     }
 
-    public Subtask(String name, String description, int id, TaskStatus status, int epicId) {
+    public Subtask(String name, String description, int id, Status status, int epicId) {
         super(name, description, id, status);
         this.epicId = epicId;
     }
