@@ -8,7 +8,7 @@ import util.Managers;
 import util.Status;
 
 public class InMemoryTaskManager implements TaskManager {
-    int id;
+    static int id;
     final HashMap<Integer, Task> tasks;
     final HashMap<Integer, Epic> epics;
     final HashMap<Integer, Subtask> subtasks;

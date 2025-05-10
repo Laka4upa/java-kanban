@@ -35,6 +35,23 @@ public class Epic extends Task {
     }
 
     @Override
+    public String getType() {
+        return "EPIC";
+    }
+
+    @Override
+    public String toCsv() {
+        return String.join(",",
+                String.valueOf(id),
+                getType(),
+                escapeCsvField(name),
+                status.toString(),
+                escapeCsvField(description),
+                "" // Пустое поле для эпика
+        );
+    }
+
+    @Override
     public Epic copy() {
     Epic copy = new Epic(this.name, this.description, new ArrayList<>(this.subIds));
     copy.setId(this.id);

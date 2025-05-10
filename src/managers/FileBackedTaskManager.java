@@ -4,6 +4,9 @@ import exceptions.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import tasks.*;
 import util.*;
 
@@ -33,49 +36,56 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка сохранения в файл", e);
-        } catch (Exception e) {
-            throw new ManagerSaveException("Неожиданная ошибка при сохранении", e);
         }
     }
 
     // Метод загрузки данных из файла в память
     public static FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager manager = new FileBackedTaskManager(file);
+        int maxId = 0;
 
         try (BufferedReader reader = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
-            String line;
             // Пропускаем заголовок
             reader.readLine();
+
+            String line;
             while ((line = reader.readLine()) != null) {
-                if (line.isEmpty()) {
-                    continue; // Пропускаем пустые строки
+                if (line.trim().isEmpty()) {
+                    continue;
                 }
-                // Восстанавливаем задачи
+                String[] parts = line.split(",", -1); // -1 сохраняет пустые значения
+                if (parts.length < 6) {
+                    throw new ManagerSaveException("Некорректная строка: " + line);
+                }
                 Task task = fromString(line);
-                if (task instanceof Epic) {
-                    manager.epics.put(task.getId(), (Epic) task);
-                } else if (task instanceof Subtask) {
-                    manager.subtasks.put(task.getId(), (Subtask) task);
-                    // Добавляем подзадачу в эпик
-                    Epic epic = manager.epics.get(((Subtask) task).getEpicId());
-                    if (epic != null) {
-                        epic.addSubtaskId(task.getId());
-                        manager.updateEpicStatus(epic);
-                    }
-                } else {
-                    manager.tasks.put(task.getId(), task);
+                if (task == null) continue;
+                // Обновляем максимальный ID
+                if (task.getId() > maxId) {
+                    maxId = task.getId();
+                }
+                // Распределяем задачи по соответствующим мапам
+                switch (task.getType()) {
+                    case "TASK":
+                        manager.tasks.put(task.getId(), task);
+                        break;
+                    case "EPIC":
+                        manager.epics.put(task.getId(), (Epic) task);
+                        break;
+                    case "SUBTASK":
+                        manager.subtasks.put(task.getId(), (Subtask) task);
+                        // Добавляем подзадачу в эпик
+                        Epic epic = manager.epics.get(((Subtask) task).getEpicId());
+                        if (epic != null) {
+                            epic.addSubtaskId(task.getId());
+                        }
+                        break;
+                    default:
+                        throw new ManagerSaveException("Неизвестный тип задачи: " + task.getType());
                 }
             }
-            // Обновляем счетчик id
-            int maxId = 0;
-            for (Integer id : manager.tasks.keySet()) {
-                if (id > maxId) maxId = id;
-            }
-            for (Integer id : manager.epics.keySet()) {
-                if (id > maxId) maxId = id;
-            }
-            for (Integer id : manager.subtasks.keySet()) {
-                if (id > maxId) maxId = id;
+            // Обновляем статусы всех эпиков после загрузки
+            for (Epic epic : manager.epics.values()) {
+                manager.updateEpicStatus(epic);
             }
             manager.id = maxId;
         } catch (IOException e) {
@@ -86,30 +96,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     // Преобразование задачи в строку CSV
     private String toString(Task task) {
-        // Определяем тип задачи
-        String type;
-        if (task instanceof Epic) {
-            type = "EPIC";
-        } else if (task instanceof Subtask) {
-            type = "SUBTASK";
-        } else {
-            type = "TASK";
-        }
-        // Формируем базовые поля
-        String csv = String.join(",",
-                String.valueOf(task.getId()),
-                type,
-                task.getName(),
-                task.getStatus().toString(),
-                task.getDescription() != null ? task.getDescription() : ""
-        );
-        // Добавляем epicId для подзадач
-        if (task instanceof Subtask) {
-            csv += "," + ((Subtask) task).getEpicId();
-        } else {
-            csv += ","; // Добавляем пустое поле для эпика
-        }
-        return csv;
+        return task.toCsv();
     }
 
     // Преобразование строки CSV в объект задачи
@@ -118,46 +105,68 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerSaveException("Строка не может быть пустой");
         }
 
-        String[] values = value.split(",", -1);
-        if (values.length < 6) {
-            throw new ManagerSaveException("Недостаточно данных в строке");
+        String[] values = parseCsvLine(value);
+        if (values.length < 5) {
+            throw new ManagerSaveException("Недостаточно данных в строке: " + value);
         }
 
         try {
-            String id = values[0].trim();
+            int id = Integer.parseInt(values[0].trim());
             String type = values[1].trim();
             String name = values[2].trim();
-            String taskStatus = values[3].trim();
-            String description = values[4].trim();
+            Status status = Status.valueOf(values[3].trim().toUpperCase());
+            String description = values.length > 4 ? values[4].trim() : "";
 
             switch (type) {
                 case "EPIC":
                     Epic epic = new Epic(name, description);
-                    epic.setId(Integer.parseInt(id));
-                    epic.setStatus(Status.valueOf(taskStatus.toUpperCase()));
+                    epic.setId(id);
+                    epic.setStatus(status);
                     return epic;
+
                 case "SUBTASK":
                     if (values.length < 6 || values[5].trim().isEmpty()) {
                         throw new ManagerSaveException("Для подзадачи не указан ID эпика");
                     }
-                    Integer idOfEpic = Integer.valueOf(values[5].trim());
-                    Subtask subtask = new Subtask(name, description, idOfEpic);
-                    subtask.setId(Integer.parseInt(id));
-                    subtask.setStatus(Status.valueOf(taskStatus.toUpperCase()));
+                    int epicId = Integer.parseInt(values[5].trim());
+                    Subtask subtask = new Subtask(name, description, epicId);
+                    subtask.setId(id);
+                    subtask.setStatus(status);
                     return subtask;
+
                 case "TASK":
                     Task task = new Task(name, description);
-                    task.setId(Integer.parseInt(id));
-                    task.setStatus(Status.valueOf(taskStatus.toUpperCase()));
+                    task.setId(id);
+                    task.setStatus(status);
                     return task;
+
                 default:
                     throw new ManagerSaveException("Неизвестный тип задачи: " + type);
             }
         } catch (NumberFormatException e) {
-            throw new ManagerSaveException("Ошибка формата числа", e);
+            throw new ManagerSaveException("Ошибка формата числа в строке: " + value, e);
         } catch (IllegalArgumentException e) {
-            throw new ManagerSaveException("Некорректное значение статуса", e);
+            throw new ManagerSaveException("Некорректное значение статуса в строке: " + value, e);
         }
+    }
+
+    private static String[] parseCsvLine(String line) {
+        List<String> fields = new ArrayList<>();
+        StringBuilder field = new StringBuilder();
+        boolean inQuotes = false;
+
+        for (char c : line.toCharArray()) {
+            if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (c == ',' && !inQuotes) {
+                fields.add(field.toString());
+                field.setLength(0);
+            } else {
+                field.append(c);
+            }
+        }
+        fields.add(field.toString());
+        return fields.toArray(new String[0]);
     }
 
     // Переопределяем методы, изменяющие состояние, и добавляем сохранение

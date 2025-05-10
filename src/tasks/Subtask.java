@@ -36,6 +36,23 @@ public class Subtask extends Task {
     }
 
     @Override
+    public String getType() {
+        return "SUBTASK";
+    }
+
+    @Override
+    public String toCsv() {
+        return String.join(",",
+                String.valueOf(id),
+                getType(),
+                escapeCsvField(name),
+                status.toString(),
+                escapeCsvField(description),
+                String.valueOf(epicId)
+        );
+    }
+
+    @Override
     public String toString() {
         return "\nSubtask{" +
                 "id = '" + getId() + '\'' +

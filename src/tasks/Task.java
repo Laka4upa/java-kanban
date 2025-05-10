@@ -65,6 +65,29 @@ public class Task {
         return new Task(this.name, this.description, this.id, this.status);
     }
 
+    public String getType() {
+        return "TASK";
+    }
+
+    public String toCsv() {
+        return String.join(",",
+                String.valueOf(id),
+                getType(),
+                escapeCsvField(name),
+                status.toString(),
+                escapeCsvField(description),
+                "" // Пустое поле для эпика
+        );
+    }
+
+    protected String escapeCsvField(String field) {
+        if (field == null) return "";
+        if (field.contains(",") || field.contains("\"")) {
+            return "\"" + field.replace("\"", "\"\"") + "\"";
+        }
+        return field;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(id);
