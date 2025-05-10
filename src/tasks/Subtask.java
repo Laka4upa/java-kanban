@@ -1,5 +1,7 @@
 package tasks;
 
+import util.Status;
+
 public class Subtask extends Task {
     private final int epicId;
 
@@ -31,6 +33,23 @@ public class Subtask extends Task {
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    @Override
+    public String getType() {
+        return "SUBTASK";
+    }
+
+    @Override
+    public String toCsv() {
+        return String.join(",",
+                String.valueOf(id),
+                getType(),
+                escapeCsvField(name),
+                status.toString(),
+                escapeCsvField(description),
+                String.valueOf(epicId)
+        );
     }
 
     @Override

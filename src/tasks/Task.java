@@ -1,5 +1,7 @@
 package tasks;
 
+import util.Status;
+
 import java.util.Objects;
 
 public class Task {
@@ -61,6 +63,29 @@ public class Task {
 
     public Task copy() {
         return new Task(this.name, this.description, this.id, this.status);
+    }
+
+    public String getType() {
+        return "TASK";
+    }
+
+    public String toCsv() {
+        return String.join(",",
+                String.valueOf(id),
+                getType(),
+                escapeCsvField(name),
+                status.toString(),
+                escapeCsvField(description),
+                "" // Пустое поле для эпика
+        );
+    }
+
+    protected String escapeCsvField(String field) {
+        if (field == null) return "";
+        if (field.contains(",") || field.contains("\"")) {
+            return "\"" + field.replace("\"", "\"\"") + "\"";
+        }
+        return field;
     }
 
     @Override
