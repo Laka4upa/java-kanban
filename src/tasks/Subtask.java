@@ -1,9 +1,8 @@
 package tasks;
 
-import util.Status;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
+import util.Status;
 
 public class Subtask extends Task {
     private final int epicId;

@@ -3,8 +3,6 @@ package managers;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
@@ -54,16 +52,9 @@ public interface TaskManager {
     //Получить список задач в порядке приоритета (по startTime)
     List<Task> getPrioritizedTasks();
 
-    /**
-     * Проверить пересечение по времени с существующими задачами
-     * @param task задача для проверки
-     * @return true если есть пересечение по времени
-     */
+    //Проверить пересечение по времени с существующими задачами
     boolean hasTimeOverlap(Task task);
 
-    /**
-     * Обновить временные параметры эпика
-     * @param epic эпик для обновления
-     */
+    //Обновить временные параметры эпика
     void updateEpicTimeParameters(Epic epic);
 }

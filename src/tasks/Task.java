@@ -1,10 +1,9 @@
 package tasks;
 
-import util.Status;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import util.Status;
 
 public class Task {
     protected String name;
