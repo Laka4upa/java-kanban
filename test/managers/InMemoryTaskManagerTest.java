@@ -6,8 +6,13 @@ import org.junit.jupiter.api.Test;
 import tasks.*;
 import util.Status;
 
-class InMemoryTaskManagerTest {
+class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
+    @Override
+    protected InMemoryTaskManager createTaskManager() {
+        return new InMemoryTaskManager();
+    }
 
+    // Специфичные тесты для InMemoryTaskManager
     @Test
     void shouldAddAllTasksTypesAndGetById() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();

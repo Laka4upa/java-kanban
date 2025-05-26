@@ -67,22 +67,21 @@ public class InMemoryHistoryManager implements HistoryManager {
             if (node == null) {
                 return;
             }
-
-            if (node.prev != null) { // Обновляем связи соседних узлов
-                node.prev.next = node.next;
+            // Обновляем ссылки соседних узлов
+            if (node.prev != null) {
+                node.prev.next = node.next;  // У предыдущего элемента next -> на следующий после удаляемого
             } else {
-                head = node.next;
+                head = node.next;  // Если удаляем первый элемент, head сдвигается
             }
-
             if (node.next != null) {
-                node.next.prev = node.prev;
+                node.next.prev = node.prev;  // У следующего элемента prev -> на предыдущий перед удаляемым
             } else {
-                tail = node.prev;
+                tail = node.prev;  // Если удаляем последний элемент, tail сдвигается
             }
-
-            node.prev = null; // Очищаем ссылки
+            // Очищаем ссылки удаляемого узла
+            node.prev = null;
             node.next = null;
-
+            // Удаляем узел из мапы
             nodeMap.remove(node.task.getId());
         }
     }
@@ -93,7 +92,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node next;
 
         Node(Node prev, Task task, Node next) {
-            this.task = task;
+            this.task = Objects.requireNonNull(task, "Task cannot be null");
             this.prev = prev;
             this.next = next;
         }

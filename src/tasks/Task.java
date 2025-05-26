@@ -2,6 +2,8 @@ package tasks;
 
 import util.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -9,6 +11,8 @@ public class Task {
     protected String description;
     protected int id;
     protected Status status;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
     public Task(String name, String description) {
         this.name = name;
@@ -27,6 +31,19 @@ public class Task {
         this.description = description;
         this.id = id;
         this.status = status;
+    }
+
+    public Task(String name, String description, Status status, Duration duration, LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
+    public Task(String name, String description, int id, Status status, Duration duration, LocalDateTime startTime) {
+        this(name, description, status, duration, startTime);
+        this.id = id;
     }
 
     public String getName() {
@@ -62,7 +79,31 @@ public class Task {
     }
 
     public Task copy() {
-        return new Task(this.name, this.description, this.id, this.status);
+        Task task = new Task(this.name, this.description, this.id, this.status, this.duration, this.startTime);
+        return task;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
+        return startTime.plus(duration);
     }
 
     public String getType() {
@@ -76,6 +117,8 @@ public class Task {
                 escapeCsvField(name),
                 status.toString(),
                 escapeCsvField(description),
+                duration == null ? "" : String.valueOf(duration.toMinutes()),
+                startTime == null ? "" : startTime.toString(),
                 "" // Пустое поле для эпика
         );
     }
@@ -108,6 +151,9 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
+                ", duration=" + (duration == null ? "null" : duration.toMinutes() + "m") +
+                ", startTime=" + (startTime == null ? "null" : startTime) +
+                ", endTime=" + getEndTime() +
                 '}';
     }
 }
