@@ -2,7 +2,10 @@ package tasks;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
+
 import util.Status;
+import util.TaskUtils;
 
 public class Subtask extends Task {
     private final int epicId;
@@ -29,43 +32,37 @@ public class Subtask extends Task {
     }
 
     @Override
-    public Subtask copy() {
-        return new Subtask(this.name, this.description, this.id, this.status, this.epicId, this.duration,
-                this.startTime);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
     public String getType() {
         return "SUBTASK";
     }
 
     @Override
     public String toCsv() {
-        return String.join(",",
-                String.valueOf(id),
-                getType(),
-                escapeCsvField(name),
-                status.toString(),
-                escapeCsvField(description),
-                String.valueOf(epicId),
-                duration == null ? "" : String.valueOf(duration.toMinutes()),
-                startTime == null ? "" : startTime.toString()
-        );
+        return TaskUtils.toCsv(this, String.valueOf(epicId));
+    }
+
+    @Override
+    public Subtask copy() {
+        return TaskUtils.copySubtask(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Subtask subtask = (Subtask) o;
+        return epicId == subtask.epicId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), epicId);
     }
 
     @Override
     public String toString() {
-        return "\nSubtask{" +
+        return "Subtask{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

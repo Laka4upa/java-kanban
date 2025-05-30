@@ -6,7 +6,6 @@ import java.util.List;
 import org.junit.jupiter.api.*;
 import tasks.*;
 import util.Managers;
-import util.Status;
 
 
 class InMemoryHistoryManagerTest {

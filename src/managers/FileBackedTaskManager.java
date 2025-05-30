@@ -216,10 +216,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void addSubtask(Subtask subtask) {
         super.addSubtask(subtask);
-        Epic epic = getEpicById(subtask.getEpicId());
-        if (epic != null) {
-            epic.updateTimeParameters(getAllSubtasksOfEpic(epic));
-        }
         save();
     }
 
@@ -259,16 +255,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void removeSubtaskById(int id) {
-        Subtask subtask = getSubtaskById(id);
-        if (subtask != null) {
-            int epicId = subtask.getEpicId();
-            super.removeSubtaskById(id);
-            Epic epic = getEpicById(epicId);
-            if (epic != null) {
-                epic.updateTimeParameters(getAllSubtasksOfEpic(epic));
-            }
-            save();
-        }
+        super.removeSubtaskById(id);
+        save();
     }
 
     @Override

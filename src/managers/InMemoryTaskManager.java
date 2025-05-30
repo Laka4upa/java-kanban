@@ -107,7 +107,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (hasTimeOverlap(task)) { // Добавление проверки по пересечению задач
             throw new TimeConflictException("Задача пересекается по времени с существующей.");
         }
-        task.setId(generateId());
+        if (task.getId() <= 0 || tasks.containsKey(task.getId())) {
+            task.setId(generateId());
+        }
         Task taskCopy = task.copy();
         tasks.put(taskCopy.getId(), taskCopy);
         if (taskCopy.getStartTime() != null) {
@@ -118,7 +120,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addEpic(Epic epic) {
         if (epic == null) return;
-        epic.setId(generateId());
+        if (epic.getId() <= 0 || epics.containsKey(epic.getId())) {
+            epic.setId(generateId());
+        }
         Epic epicCopy = new Epic(epic.getName(), epic.getDescription());
         epicCopy.setId(epic.getId());
         epicCopy.setStatus(Status.NEW);
@@ -132,7 +136,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (hasTimeOverlap(subtask)) {
             throw new TimeConflictException("Подзадача пересекается по времени");
         }
-        subtask.setId(generateId());
+        if (subtask.getId() <= 0 || subtasks.containsKey(subtask.getId())) {
+            subtask.setId(generateId());
+        }
         if (subtasks.containsKey(subtask.getId())) return;
 
         Subtask subtaskCopy = subtask.copy();
@@ -146,6 +152,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (epic.addSubtaskId(subtaskCopy.getId())) {
             updateEpicStatus(epic);
         }
+        updateEpicTimeParameters(epic);
     }
 
     @Override
@@ -232,6 +239,7 @@ public class InMemoryTaskManager implements TaskManager {
             if (epic != null) {
                 epic.removeSubtaskById(id);
                 updateEpicStatus(epic);
+                updateEpicTimeParameters(epic);
             }
             historyManager.remove(id);
         }

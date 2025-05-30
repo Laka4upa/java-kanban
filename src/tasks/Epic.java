@@ -1,5 +1,6 @@
 package tasks;
 
+import util.TaskUtils;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,16 +27,6 @@ public class Epic extends Task {
     }
 
     @Override
-    public Duration getDuration() {
-        return duration;
-    }
-
-    @Override
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    @Override
     public LocalDateTime getEndTime() {
         return endTime;
     }
@@ -47,7 +38,7 @@ public class Epic extends Task {
     }
 
     public boolean removeSubtaskById(int subtaskId) {
-       return subIds.remove(Integer.valueOf(subtaskId));
+        return subIds.remove(Integer.valueOf(subtaskId));
     }
 
     public void clearSubtaskIds() {
@@ -59,7 +50,6 @@ public class Epic extends Task {
         return "EPIC";
     }
 
-    // Метод для обновления временных параметров эпика на основе подзадач
     public void updateTimeParameters(List<Subtask> subtasks) {
         if (subtasks == null || subtasks.isEmpty()) {
             this.duration = null;
@@ -67,23 +57,23 @@ public class Epic extends Task {
             this.endTime = null;
             return;
         }
-        // Находим самую раннюю startTime
+
         Optional<LocalDateTime> minStartTime = subtasks.stream()
                 .map(Subtask::getStartTime)
                 .filter(Objects::nonNull)
                 .min(LocalDateTime::compareTo);
-        // Находим самую позднюю endTime
+
         Optional<LocalDateTime> maxEndTime = subtasks.stream()
                 .map(Subtask::getEndTime)
                 .filter(Objects::nonNull)
                 .max(LocalDateTime::compareTo);
-        // Суммируем продолжительности всех подзадач
+
         long totalMinutes = subtasks.stream()
                 .map(Subtask::getDuration)
                 .filter(Objects::nonNull)
                 .mapToLong(Duration::toMinutes)
                 .sum();
-        // Устанавливаем параметры
+
         this.startTime = minStartTime.orElse(null);
         this.endTime = maxEndTime.orElse(null);
         this.duration = totalMinutes > 0 ? Duration.ofMinutes(totalMinutes) : null;
@@ -91,43 +81,34 @@ public class Epic extends Task {
 
     @Override
     public String toCsv() {
-        return String.join(",",
-                String.valueOf(id),
-                getType(),
-                escapeCsvField(name),
-                status.toString(),
-                escapeCsvField(description),
-                "", // Пустое поле для эпика
-                duration == null ? "" : String.valueOf(duration.toMinutes()),
-                startTime == null ? "" : startTime.toString(),
-                endTime == null ? "" : endTime.toString()
-        );
+        String subTasksIds = String.join(";", subIds.stream()
+                .map(String::valueOf)
+                .toArray(String[]::new));
+        return TaskUtils.toCsv(this, subTasksIds);
     }
 
     @Override
     public Epic copy() {
-        Epic copy = new Epic(this.name, this.description, new ArrayList<>(this.subIds));
-        copy.setId(this.id);
-        copy.setStatus(this.status);
-        copy.duration = this.duration;
-        copy.startTime = this.startTime;
-        copy.endTime = this.endTime;
-        return copy;
+        return TaskUtils.copyEpic(this);
     }
 
     @Override
     public boolean equals(Object o) {
-        return super.equals(o);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return Objects.equals(subIds, epic.subIds);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(super.hashCode(), subIds);
     }
 
     @Override
     public String toString() {
-        return "\nEpic{" +
+        return "Epic{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +

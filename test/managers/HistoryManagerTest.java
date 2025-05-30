@@ -1,7 +1,5 @@
-package taskmanager.core.managers;
+package managers;
 
-import managers.*;
-import managers.InMemoryHistoryManager;
 import org.junit.jupiter.api.Test;
 import tasks.*;
 
