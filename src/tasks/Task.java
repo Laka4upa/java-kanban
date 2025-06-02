@@ -1,34 +1,46 @@
 package tasks;
 
-import util.Status;
-
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
+import util.Status;
+import util.TaskUtils;
 
 public class Task {
     protected String name;
     protected String description;
     protected int id;
     protected Status status;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
+    // Конструкторы
     public Task(String name, String description) {
-        this.name = name;
-        this.description = description;
-        this.status = Status.NEW;
+        this(name, description, Status.NEW);
     }
 
     public Task(String name, String description, Status status) {
-        this.status = status;
-        this.name = name;
-        this.description = description;
+        this(name, description, 0, status, null, null);
     }
 
     public Task(String name, String description, int id, Status status) {
+        this(name, description, id, status, null, null);
+    }
+
+    public Task(String name, String description, Status status, Duration duration, LocalDateTime startTime) {
+        this(name, description, 0, status, duration, startTime);
+    }
+
+    public Task(String name, String description, int id, Status status, Duration duration, LocalDateTime startTime) {
         this.name = name;
         this.description = description;
         this.id = id;
         this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
+    // Геттеры и сеттеры
     public String getName() {
         return name;
     }
@@ -61,31 +73,49 @@ public class Task {
         this.status = status;
     }
 
-    public Task copy() {
-        return new Task(this.name, this.description, this.id, this.status);
+    public Duration getDuration() {
+        return duration;
     }
 
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        if (startTime == null || duration == null) {
+            return null;
+        }
+        return startTime.plus(duration);
+    }
+
+    // Методы для работы с задачами
     public String getType() {
         return "TASK";
     }
 
-    public String toCsv() {
-        return String.join(",",
-                String.valueOf(id),
-                getType(),
-                escapeCsvField(name),
-                status.toString(),
-                escapeCsvField(description),
-                "" // Пустое поле для эпика
-        );
+    public Task copy() {
+        return TaskUtils.copyTask(this);
     }
 
-    protected String escapeCsvField(String field) {
-        if (field == null) return "";
-        if (field.contains(",") || field.contains("\"")) {
-            return "\"" + field.replace("\"", "\"\"") + "\"";
-        }
-        return field;
+    public String toCsv() {
+        return TaskUtils.toCsv(this);
+    }
+
+    // Переопределенные методы Object
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return id == task.id;
     }
 
     @Override
@@ -94,20 +124,15 @@ public class Task {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || !(o instanceof Task)) return false;
-        Task task = (Task) o;
-        return id == task.id;
-    }
-
-    @Override
     public String toString() {
-        return "\nTask{" +
+        return "Task{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", status='" + status + '\'' +
+                ", status=" + status +
+                ", duration=" + (duration == null ? "null" : duration.toMinutes() + "m") +
+                ", startTime=" + (startTime == null ? "null" : startTime) +
+                ", endTime=" + getEndTime() +
                 '}';
     }
 }
