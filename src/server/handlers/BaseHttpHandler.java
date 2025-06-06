@@ -1,16 +1,27 @@
 package server.handlers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import managers.TaskManager;
+import util.DurationAdapter;
+import util.LocalDateTimeAdapter;
 
 public abstract class BaseHttpHandler {
     protected final TaskManager taskManager;
+    protected final Gson gson;
 
     protected BaseHttpHandler(TaskManager taskManager) {
         this.taskManager = taskManager;
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .create();
     }
 
     // Основной метод отправки текстового ответа
